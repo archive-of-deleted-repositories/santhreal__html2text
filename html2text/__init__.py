@@ -946,7 +946,11 @@ class HTML2Text(html.parser.HTMLParser):
         """
         nest_count = 0
         if "margin-left" in style:
-            nest_count = int(style["margin-left"][:-2]) // self.google_list_indent
+            # Google Docs emits NNpx; non-px/short values must not raise.
+            try:
+                nest_count = int(style["margin-left"][:-2]) // self.google_list_indent
+            except (ValueError, TypeError):
+                nest_count = 0
 
         return nest_count
 
